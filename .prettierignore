@@ -1,0 +1,11 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.expo/
+dist/
+web-build/
+coverage/
+
+# Generated files
+*.log
