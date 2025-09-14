@@ -28,8 +28,8 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   if (!hasMore) {
     return (
       <View style={styles.endContainer}>
-        <Text style={styles.endText}>{`🌍 ${t('noResults')}: ${totalAvailable}`}</Text>
-        <Text style={styles.endSubtext}>{t('loadMore')}</Text>
+        <Text style={styles.endText}>{t('allLoaded', { count: totalAvailable })}</Text>
+        <Text style={styles.endSubtext}>{t('loadMoreEndSubtext')}</Text>
       </View>
     );
   }
@@ -44,7 +44,7 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
       onPress={onPress}
       disabled={loading}
       accessibilityRole="button"
-      accessibilityLabel={t('loadMore') + `. ${totalLoaded} of ${totalAvailable}`}
+  accessibilityLabel={t('loadMore') + '. ' + t('loadedProgress', { loaded: totalLoaded, total: totalAvailable })}
     >
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -55,7 +55,7 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
         <View style={styles.buttonContent}>
           <Text style={styles.buttonText}>{t('loadMore')}</Text>
           <Text style={styles.progressText}>
-            {totalLoaded} of {totalAvailable} loaded
+            {totalLoaded} {t('loadedProgress')} {totalAvailable}
           </Text>
         </View>
       )}
