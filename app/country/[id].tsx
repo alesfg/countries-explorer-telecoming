@@ -9,32 +9,48 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { LoadingSpinner } from '../../src/components';
+import { LoadingSpinner, ErrorMessage } from '../../src/components';
 import { Country } from '../../src/types';
-import { mockCountries } from '../../src/data/mockCountries';
+import { countriesApi } from '../../src/services';
 
 export default function CountryDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const [country, setCountry] = useState<Country | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadCountry = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      if (!id) {
+        setError('Country ID is required');
+        return;
+      }
+
+      const response = await countriesApi.getCountryByCode(id);
+      
+      if (response.success && response.data && response.data.length > 0) {
+        setCountry(response.data[0]);
+      } else {
+        setError(response.error || 'Country not found');
+      }
+    } catch (err) {
+      setError('Network error. Please check your connection.');
+      console.error('Error loading country:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadCountry = async () => {
-      setLoading(true);
-      
-      // Simular delay de red
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Buscar país por código cca3
-      const foundCountry = mockCountries.find(c => c.cca3 === id);
-      setCountry(foundCountry || null);
-      setLoading(false);
-    };
-
-    if (id) {
-      loadCountry();
-    }
+    loadCountry();
   }, [id]);
+
+  const handleRetry = () => {
+    loadCountry();
+  };
 
   const formatPopulation = (population: number): string => {
     return population.toLocaleString();
@@ -42,6 +58,16 @@ export default function CountryDetailScreen() {
 
   if (loading) {
     return <LoadingSpinner message="Loading country details..." />;
+  }
+
+  if (error) {
+    return (
+      <ErrorMessage
+        title="Failed to load country"
+        message={error}
+        onRetry={handleRetry}
+      />
+    );
   }
 
   if (!country) {
@@ -67,6 +93,9 @@ export default function CountryDetailScreen() {
             source={{ uri: country.flags.png }}
             style={styles.flag}
             resizeMode="cover"
+            onError={() => {
+              console.warn('Failed to load flag image:', country.flags.png);
+            }}
           />
         </View>
 
@@ -83,7 +112,9 @@ export default function CountryDetailScreen() {
             <View style={styles.infoCard}>
               <Text style={styles.infoLabel}>Capital</Text>
               <Text style={styles.infoValue}>
-                {country.capital?.[0] || 'N/A'}
+                {country.capital && country.capital.length > 0 
+                  ? country.capital.join(', ') 
+                  : 'No capital'}
               </Text>
             </View>
 
