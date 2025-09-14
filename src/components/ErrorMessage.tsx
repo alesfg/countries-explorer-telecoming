@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { t } from '../i18n';
+import { useLocale } from '../i18n/LocaleContext';
 
 interface ErrorMessageProps {
   title?: string;
@@ -9,14 +11,17 @@ interface ErrorMessageProps {
 }
 
 export const ErrorMessage: React.FC<ErrorMessageProps> = ({
-  title = 'Something went wrong',
+  title,
   message,
   onRetry,
-  retryText = 'Try Again',
+  retryText,
 }) => {
+  useLocale();
+  const titleText = title ?? t('error');
+  const retryTextValue = retryText ?? t('tryAgain');
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>{titleText}</Text>
       <Text style={styles.message}>{message}</Text>
       
       {onRetry && (
@@ -27,9 +32,9 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
           ]}
           onPress={onRetry}
           accessibilityRole="button"
-          accessibilityLabel={retryText}
+          accessibilityLabel={retryTextValue}
         >
-          <Text style={styles.retryButtonText}>{retryText}</Text>
+          <Text style={styles.retryButtonText}>{retryTextValue}</Text>
         </Pressable>
       )}
     </View>

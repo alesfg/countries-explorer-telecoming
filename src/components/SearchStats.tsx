@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { t } from '../i18n';
+import { useLocale } from '../i18n/LocaleContext';
 
 interface SearchStatsProps {
   searchQuery: string;
@@ -16,18 +18,20 @@ export const SearchStats: React.FC<SearchStatsProps> = ({
     return null;
   }
 
+  useLocale(); // trigger rerender on locale change
+
   return (
     <View style={styles.container}>
       {isSearching ? (
-        <Text style={styles.text}>Searching...</Text>
+        <Text style={styles.text}>{t('loading')}</Text>
       ) : (
         <Text style={styles.text}>
           {totalResults === 0 ? (
-            `No results found for "${searchQuery}"`
+            `${t('noResults')} "${searchQuery}"`
           ) : totalResults === 1 ? (
-            `1 result found for "${searchQuery}"`
+            `1 ${t('noResults')} "${searchQuery}"`
           ) : (
-            `${totalResults} results found for "${searchQuery}"`
+            `${totalResults} ${t('noResults')} "${searchQuery}"`
           )}
         </Text>
       )}

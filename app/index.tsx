@@ -17,6 +17,8 @@ import {
   SearchStats,
   LoadMoreButton 
 } from '../src/components';
+import { t } from '../src/i18n';
+import { useLocale } from '../src/i18n/LocaleContext';
 import { Country } from '../src/types';
 import { countriesApi } from '../src/services';
 import { useDebounce, paginateArray, createIncrementalData } from '../src/utils';
@@ -24,6 +26,7 @@ import { SEARCH_DEBOUNCE_MS, INITIAL_LOAD_COUNT, LOAD_MORE_COUNT } from '../src/
 
 export default function CountriesListScreen() {
   const router = useRouter();
+  useLocale(); // re-render when locale changes
   
   // State for countries data
   const [allCountries, setAllCountries] = useState<Country[]>([]);
@@ -194,32 +197,28 @@ export default function CountriesListScreen() {
       return (
         <View style={styles.emptyContainer}>
           <Text style={styles.emptyIcon}>🔍</Text>
-          <Text style={styles.emptyTitle}>No countries found</Text>
-          <Text style={styles.emptyMessage}>
-            Try a different search term or check the spelling
-          </Text>
+          <Text style={styles.emptyTitle}>{t('list.emptyNoResults')}</Text>
+          <Text style={styles.emptyMessage}>{t('list.emptyTrySearch')}</Text>
         </View>
       );
     }
 
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyTitle}>No countries available</Text>
-        <Text style={styles.emptyMessage}>
-          Pull down to refresh the list
-        </Text>
+        <Text style={styles.emptyTitle}>{t('list.emptyNoCountries')}</Text>
+        <Text style={styles.emptyMessage}>{t('list.refreshTitle')}</Text>
       </View>
     );
   };
 
   if (loading) {
-    return <LoadingSpinner message="Loading countries from around the world..." />;
+    return <LoadingSpinner message={t('list.loadingAll')} />;
   }
 
   if (error) {
     return (
       <ErrorMessage
-        title="Failed to load countries"
+        title={t('list.failedToLoad')}
         message={error}
         onRetry={handleRetry}
       />
@@ -232,12 +231,13 @@ export default function CountriesListScreen() {
       
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Countries Explorer</Text>
+        <Text style={styles.title}>{t('list.title')}</Text>
         <Text style={styles.subtitle}>
-          {searchQuery.trim() 
-            ? `Search results` 
-            : `Showing ${displayedCountries.length} of ${allCountries.length} countries`
-          }
+          {searchQuery.trim()
+            ? t('list.subtitleSearchResults')
+            : t('list.subtitleShowing')
+                .replace('%d', String(displayedCountries.length))
+                .replace('%d', String(allCountries.length))}
         </Text>
       </View>
 
@@ -245,7 +245,6 @@ export default function CountriesListScreen() {
       <SearchInput
         value={searchQuery}
         onChangeText={setSearchQuery}
-        placeholder="Search by country, capital, or region..."
         onClear={handleSearchClear}
       />
 
@@ -280,8 +279,8 @@ export default function CountriesListScreen() {
             onRefresh={onRefresh}
             colors={['#3b82f6']}
             tintColor="#3b82f6"
-            title="Pull to refresh"
-            titleColor="#64748b"
+      title={t('list.refreshTitle')}
+      titleColor="#64748b"
           />
         }
         keyboardShouldPersistTaps="handled"
