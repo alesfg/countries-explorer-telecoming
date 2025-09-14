@@ -1,0 +1,45 @@
+export default {
+  loadMore: 'Cargar más',
+  loadedProgress: 'de',
+  allLoaded: 'Todos los países cargados: {{count}}',
+  loadMoreEndSubtext: 'No hay más países para cargar.',
+  loading: 'Cargando...',
+  search: {
+    placeholder: 'Buscar países...',
+    accessibilityLabel: 'Buscar países',
+    accessibilityHint: 'Escribe para buscar países por nombre',
+  },
+  // eliminado duplicados loading y loadMore
+  tryAgain: 'Intentar de nuevo',
+  noResults: 'Sin resultados',
+  error: 'Algo salió mal',
+  country: {
+    population: 'Población',
+    region: 'Región',
+    capital: 'Capital',
+  },
+  viewDetails: 'Ver detalles de',
+  app: {
+    title: 'Explorador de Países',
+    countryDetails: 'Detalles del País',
+  },
+  detail: {
+    loading: 'Cargando detalles del país...',
+    failedToLoad: 'No se pudo cargar el país',
+    notFoundTitle: 'País no encontrado',
+    notFoundMessage: 'El país con código "%s" no pudo ser encontrado.',
+    noCapital: 'Sin capital',
+    countryCode: 'Código del País',
+  },
+  list: {
+    title: 'Explorador de Países',
+    subtitleShowing: 'Mostrando %d de %d países',
+    subtitleSearchResults: 'Resultados de búsqueda',
+    emptyNoCountries: 'No hay países disponibles',
+    emptyNoResults: 'No se encontraron países',
+    emptyTrySearch: 'Prueba otro término de búsqueda o revisa la ortografía',
+    refreshTitle: 'Tira para actualizar',
+    loadingAll: 'Cargando países...',
+    failedToLoad: 'No se pudieron cargar los países',
+  },
+};
