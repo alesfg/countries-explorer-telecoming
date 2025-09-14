@@ -1,11 +1,15 @@
 export default {
+  loadMore: 'Cargar más',
+  loadedProgress: 'de',
+  allLoaded: 'Todos los países cargados: {{count}}',
+  loadMoreEndSubtext: 'No hay más países para cargar.',
+  loading: 'Cargando...',
   search: {
     placeholder: 'Buscar países...',
     accessibilityLabel: 'Buscar países',
     accessibilityHint: 'Escribe para buscar países por nombre',
   },
-  loading: 'Cargando...',
-  loadMore: 'Cargar más',
+  // eliminado duplicados loading y loadMore
   tryAgain: 'Intentar de nuevo',
   noResults: 'Sin resultados',
   error: 'Algo salió mal',

@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     paddingVertical: 12,
-    backgroundColor: '#2563eb',
+    backgroundColor: 'transparent',
   },
   searchContainer: {
     flexDirection: 'row',
@@ -73,11 +73,11 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2,
+      height: 6,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    elevation: 6,
   },
   searchIcon: {
     fontSize: 18,

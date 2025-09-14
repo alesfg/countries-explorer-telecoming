@@ -226,12 +226,11 @@ export default function CountriesListScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['left', 'right']}>
       <StatusBar barStyle="light-content" backgroundColor="#2563eb" />
       
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>{t('list.title')}</Text>
         <Text style={styles.subtitle}>
           {searchQuery.trim()
             ? t('list.subtitleSearchResults')
@@ -297,18 +296,28 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: '#2563eb',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 0,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 4,
+    marginBottom: 0,
+    marginTop: 0,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#bfdbfe',
-    opacity: 0.9,
+    opacity: 0.95,
+    paddingTop: 10,
+    paddingBottom: 6,
   },
   listContainer: {
     paddingVertical: 8,

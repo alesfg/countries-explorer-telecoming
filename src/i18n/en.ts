@@ -1,11 +1,15 @@
 export default {
+  loadMore: 'Load more',
+  loadedProgress: 'of loaded',
+  allLoaded: 'All countries loaded: {{count}}',
+  loadMoreEndSubtext: 'No more countries to load.',
+  loading: 'Loading...',
   search: {
     placeholder: 'Search countries...',
     accessibilityLabel: 'Search countries',
     accessibilityHint: 'Type to search for countries by name',
   },
-  loading: 'Loading...',
-  loadMore: 'Load more',
+  // removed duplicate loading and loadMore
   tryAgain: 'Try again',
   noResults: 'No results',
   error: 'Something went wrong',
