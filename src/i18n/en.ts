@@ -1,0 +1,41 @@
+export default {
+  search: {
+    placeholder: 'Search countries...',
+    accessibilityLabel: 'Search countries',
+    accessibilityHint: 'Type to search for countries by name',
+  },
+  loading: 'Loading...',
+  loadMore: 'Load more',
+  tryAgain: 'Try again',
+  noResults: 'No results',
+  error: 'Something went wrong',
+  country: {
+    population: 'Population',
+    region: 'Region',
+    capital: 'Capital',
+  },
+  viewDetails: 'View details for',
+  app: {
+    title: 'Countries Explorer',
+    countryDetails: 'Country Details',
+  },
+  detail: {
+    loading: 'Loading country details...',
+    failedToLoad: 'Failed to load country',
+    notFoundTitle: 'Country not found',
+    notFoundMessage: 'The country with code "%s" could not be found.',
+    noCapital: 'No capital',
+    countryCode: 'Country Code',
+  },
+  list: {
+    title: 'Countries Explorer',
+    subtitleShowing: 'Showing %d of %d countries',
+    subtitleSearchResults: 'Search results',
+    emptyNoCountries: 'No countries available',
+    emptyNoResults: 'No countries found',
+    emptyTrySearch: 'Try a different search term or check the spelling',
+    refreshTitle: 'Pull to refresh',
+    loadingAll: 'Loading countries from around the world...',
+    failedToLoad: 'Failed to load countries',
+  },
+};

@@ -10,6 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import { LoadingSpinner, ErrorMessage } from '../../src/components';
+import { t } from '../../src/i18n';
+import { useLocale } from '../../src/i18n/LocaleContext';
 import { Country } from '../../src/types';
 import { countriesApi } from '../../src/services';
 
@@ -57,13 +59,15 @@ export default function CountryDetailScreen() {
   };
 
   if (loading) {
-    return <LoadingSpinner message="Loading country details..." />;
+    useLocale();
+    return <LoadingSpinner message={t('detail.loading')} />;
   }
 
   if (error) {
+    useLocale();
     return (
       <ErrorMessage
-        title="Failed to load country"
+        title={t('detail.failedToLoad')}
         message={error}
         onRetry={handleRetry}
       />
@@ -71,12 +75,13 @@ export default function CountryDetailScreen() {
   }
 
   if (!country) {
+    useLocale();
     return (
       <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorTitle}>Country not found</Text>
+          <Text style={styles.errorTitle}>{t('detail.notFoundTitle')}</Text>
           <Text style={styles.errorMessage}>
-            The country with code "{id}" could not be found.
+            {t('detail.notFoundMessage').replace('%s', id || '')}
           </Text>
         </View>
       </SafeAreaView>
@@ -110,30 +115,30 @@ export default function CountryDetailScreen() {
 
           <View style={styles.infoGrid}>
             <View style={styles.infoCard}>
-              <Text style={styles.infoLabel}>Capital</Text>
+              <Text style={styles.infoLabel}>{t('country.capital')}</Text>
               <Text style={styles.infoValue}>
-                {country.capital && country.capital.length > 0 
-                  ? country.capital.join(', ') 
-                  : 'No capital'}
+                {country.capital && country.capital.length > 0
+                  ? country.capital.join(', ')
+                  : t('detail.noCapital')}
               </Text>
             </View>
 
             <View style={styles.infoCard}>
-              <Text style={styles.infoLabel}>Population</Text>
+              <Text style={styles.infoLabel}>{t('country.population')}</Text>
               <Text style={styles.infoValue}>
                 {formatPopulation(country.population)}
               </Text>
             </View>
 
             <View style={styles.infoCard}>
-              <Text style={styles.infoLabel}>Region</Text>
+              <Text style={styles.infoLabel}>{t('country.region')}</Text>
               <Text style={styles.infoValue}>
                 {country.region}
               </Text>
             </View>
 
             <View style={styles.infoCard}>
-              <Text style={styles.infoLabel}>Country Code</Text>
+              <Text style={styles.infoLabel}>{t('detail.countryCode')}</Text>
               <Text style={styles.infoValue}>
                 {country.cca3}
               </Text>

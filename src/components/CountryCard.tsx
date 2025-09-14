@@ -8,6 +8,8 @@ import {
   Dimensions,
 } from 'react-native';
 import { Country } from '../types';
+import { t } from '../i18n';
+import { useLocale } from '../i18n/LocaleContext';
 
 const { width } = Dimensions.get('window');
 
@@ -20,6 +22,7 @@ export const CountryCard: React.FC<CountryCardProps> = ({
   country, 
   onPress 
 }) => {
+  useLocale();
   const formatPopulation = (population: number): string => {
     if (population >= 1000000) {
       return `${(population / 1000000).toFixed(1)}M`;
@@ -37,7 +40,7 @@ export const CountryCard: React.FC<CountryCardProps> = ({
       ]}
       onPress={onPress}
       accessibilityRole="button"
-      accessibilityLabel={`View details for ${country.name.common}`}
+  accessibilityLabel={`${t('viewDetails')} ${country.name.common}`}
     >
       <View style={styles.flagContainer}>
         <Image
@@ -53,14 +56,14 @@ export const CountryCard: React.FC<CountryCardProps> = ({
         </Text>
         
         <View style={styles.detailRow}>
-          <Text style={styles.label}>Capital:</Text>
+          <Text style={styles.label}>{t('country.capital')}:</Text>
           <Text style={styles.value} numberOfLines={1}>
-            {country.capital?.[0] || 'N/A'}
+            {country.capital?.[0] || t('detail.noCapital')}
           </Text>
         </View>
         
         <View style={styles.detailRow}>
-          <Text style={styles.label}>Population:</Text>
+          <Text style={styles.label}>{t('country.population')}:</Text>
           <Text style={styles.value}>
             {formatPopulation(country.population)}
           </Text>

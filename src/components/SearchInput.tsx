@@ -6,6 +6,8 @@ import {
   Pressable,
   Text,
 } from 'react-native';
+import { t } from '../i18n';
+import { useLocale } from '../i18n/LocaleContext';
 
 interface SearchInputProps {
   value: string;
@@ -18,10 +20,13 @@ interface SearchInputProps {
 export const SearchInput: React.FC<SearchInputProps> = ({
   value,
   onChangeText,
-  placeholder = 'Search countries...',
+  placeholder,
   onClear,
   autoFocus = false,
 }) => {
+  // consume locale to re-render on language change
+  useLocale();
+  const placeholderText = placeholder ?? t('search.placeholder');
   const handleClear = () => {
     onChangeText('');
     onClear?.();
@@ -36,15 +41,15 @@ export const SearchInput: React.FC<SearchInputProps> = ({
           style={styles.input}
           value={value}
           onChangeText={onChangeText}
-          placeholder={placeholder}
+          placeholder={placeholderText}
           placeholderTextColor="#94a3b8"
           autoFocus={autoFocus}
           autoCapitalize="words"
           autoCorrect={false}
           returnKeyType="search"
           clearButtonMode="while-editing" // iOS only
-          accessibilityLabel="Search countries"
-          accessibilityHint="Type to search for countries by name"
+          accessibilityLabel={t('search.accessibilityLabel')}
+          accessibilityHint={t('search.accessibilityHint')}
         />
      
       </View>

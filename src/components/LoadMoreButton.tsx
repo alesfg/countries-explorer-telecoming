@@ -6,6 +6,8 @@ import {
   ActivityIndicator,
   View,
 } from 'react-native';
+import { t } from '../i18n';
+import { useLocale } from '../i18n/LocaleContext';
 
 interface LoadMoreButtonProps {
   onPress: () => void;
@@ -22,15 +24,12 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   totalLoaded,
   totalAvailable,
 }) => {
+  useLocale();
   if (!hasMore) {
     return (
       <View style={styles.endContainer}>
-        <Text style={styles.endText}>
-          🌍 All {totalAvailable} countries loaded!
-        </Text>
-        <Text style={styles.endSubtext}>
-          You've explored every corner of the world
-        </Text>
+        <Text style={styles.endText}>{`🌍 ${t('noResults')}: ${totalAvailable}`}</Text>
+        <Text style={styles.endSubtext}>{t('loadMore')}</Text>
       </View>
     );
   }
@@ -45,16 +44,16 @@ export const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
       onPress={onPress}
       disabled={loading}
       accessibilityRole="button"
-      accessibilityLabel={`Load more countries. Currently showing ${totalLoaded} of ${totalAvailable}`}
+      accessibilityLabel={t('loadMore') + `. ${totalLoaded} of ${totalAvailable}`}
     >
       {loading ? (
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="small" color="#ffffff" />
-          <Text style={styles.loadingText}>Loading more countries...</Text>
+          <Text style={styles.loadingText}>{t('loading')}</Text>
         </View>
       ) : (
         <View style={styles.buttonContent}>
-          <Text style={styles.buttonText}>Load More Countries</Text>
+          <Text style={styles.buttonText}>{t('loadMore')}</Text>
           <Text style={styles.progressText}>
             {totalLoaded} of {totalAvailable} loaded
           </Text>
