@@ -13,7 +13,7 @@ Aplicación técnica para explorar países, desarrollada con React Native (Expo)
 
 1. Clona el repositorio:
    ```sh
-   git clone <REPO_URL>
+   git clone https://github.com/alesfg/countries-explorer-telecoming
    cd countries-explorer-telecoming
    ```
 2. Instala dependencias:
