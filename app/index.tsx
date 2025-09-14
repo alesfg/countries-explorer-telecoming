@@ -14,19 +14,23 @@ import {
   LoadingSpinner, 
   ErrorMessage, 
   SearchInput,
-  SearchStats 
+  SearchStats,
+  LoadMoreButton 
 } from '../src/components';
 import { Country } from '../src/types';
 import { countriesApi } from '../src/services';
-import { useDebounce } from '../src/utils';
-import { SEARCH_DEBOUNCE_MS } from '../src/constants';
+import { useDebounce, paginateArray, createIncrementalData } from '../src/utils';
+import { SEARCH_DEBOUNCE_MS, INITIAL_LOAD_COUNT, LOAD_MORE_COUNT } from '../src/constants';
 
 export default function CountriesListScreen() {
   const router = useRouter();
   
   // State for countries data
   const [allCountries, setAllCountries] = useState<Country[]>([]);
+  const [displayedCountries, setDisplayedCountries] = useState<Country[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -52,7 +56,13 @@ export default function CountriesListScreen() {
         const sortedCountries = response.data.sort((a, b) => 
           a.name.common.localeCompare(b.name.common)
         );
+        
         setAllCountries(sortedCountries);
+        
+        // Load initial page
+        const initialPage = paginateArray(sortedCountries, 1, INITIAL_LOAD_COUNT);
+        setDisplayedCountries(initialPage.data);
+        setCurrentPage(1);
       } else {
         setError(response.error || 'Failed to load countries');
       }
@@ -65,31 +75,33 @@ export default function CountriesListScreen() {
     }
   };
 
-  // Search countries by name using API
-  const searchCountries = async (query: string) => {
-    if (!query.trim()) {
-      return;
+  // Load more countries for pagination
+  const loadMoreCountries = async () => {
+    if (loadingMore || searchQuery.trim()) {
+      return; // Don't load more if already loading or searching
     }
 
     try {
-      setSearching(true);
-      const response = await countriesApi.getCountryByName(query);
+      setLoadingMore(true);
       
-      if (response.success && response.data) {
-        // Sort search results alphabetically
-        const sortedResults = response.data.sort((a, b) => 
-          a.name.common.localeCompare(b.name.common)
+      const nextPage = currentPage + 1;
+      const nextPageData = paginateArray(
+        filteredCountries, 
+        nextPage, 
+        LOAD_MORE_COUNT
+      );
+      
+      if (nextPageData.data.length > 0) {
+        setDisplayedCountries(prev => 
+          createIncrementalData(prev, nextPageData.data, (c) => c.cca3)
         );
-        return sortedResults;
-      } else {
-        console.warn('Search API error:', response.error);
-        return [];
+        setCurrentPage(nextPage);
       }
+      
     } catch (err) {
-      console.error('Error searching countries:', err);
-      return [];
+      console.error('Error loading more countries:', err);
     } finally {
-      setSearching(false);
+      setLoadingMore(false);
     }
   };
 
@@ -97,17 +109,6 @@ export default function CountriesListScreen() {
   useEffect(() => {
     loadAllCountries();
   }, []);
-
-  // Effect to handle search when debounced query changes
-  useEffect(() => {
-    const performSearch = async () => {
-      if (debouncedSearchQuery.trim()) {
-        await searchCountries(debouncedSearchQuery);
-      }
-    };
-
-    performSearch();
-  }, [debouncedSearchQuery]);
 
   // Filter countries based on search query
   const filteredCountries = useMemo(() => {
@@ -127,6 +128,24 @@ export default function CountriesListScreen() {
     );
   }, [allCountries, searchQuery]);
 
+  // Countries to display (either paginated or filtered)
+  const countriesToDisplay = useMemo(() => {
+    if (searchQuery.trim()) {
+      // When searching, show all filtered results
+      return filteredCountries;
+    }
+    // When not searching, show paginated results
+    return displayedCountries;
+  }, [searchQuery, filteredCountries, displayedCountries]);
+
+  // Check if there are more countries to load
+  const hasMoreToLoad = useMemo(() => {
+    if (searchQuery.trim()) {
+      return false; // No pagination during search
+    }
+    return displayedCountries.length < allCountries.length;
+  }, [displayedCountries.length, allCountries.length, searchQuery]);
+
   const handleCountryPress = (country: Country) => {
     router.push(`/country/${country.cca3}`);
   };
@@ -136,8 +155,10 @@ export default function CountriesListScreen() {
   };
 
   const onRefresh = () => {
-    // Clear search when refreshing
+    // Clear search and reset pagination when refreshing
     setSearchQuery('');
+    setCurrentPage(1);
+    setDisplayedCountries([]);
     loadAllCountries(true);
   };
 
@@ -151,6 +172,22 @@ export default function CountriesListScreen() {
       onPress={() => handleCountryPress(item)}
     />
   );
+
+  const renderLoadMoreButton = () => {
+    if (searchQuery.trim() || !hasMoreToLoad) {
+      return null;
+    }
+
+    return (
+      <LoadMoreButton
+        onPress={loadMoreCountries}
+        loading={loadingMore}
+        hasMore={hasMoreToLoad}
+        totalLoaded={displayedCountries.length}
+        totalAvailable={allCountries.length}
+      />
+    );
+  };
 
   const renderEmptyState = () => {
     if (searchQuery.trim()) {
@@ -197,7 +234,10 @@ export default function CountriesListScreen() {
       <View style={styles.header}>
         <Text style={styles.title}>Countries Explorer</Text>
         <Text style={styles.subtitle}>
-          Discover countries around the world
+          {searchQuery.trim() 
+            ? `Search results` 
+            : `Showing ${displayedCountries.length} of ${allCountries.length} countries`
+          }
         </Text>
       </View>
 
@@ -212,19 +252,20 @@ export default function CountriesListScreen() {
       {/* Search Stats */}
       <SearchStats
         searchQuery={searchQuery}
-        totalResults={filteredCountries.length}
+        totalResults={countriesToDisplay.length}
         isSearching={searching}
       />
 
       {/* Countries List */}
       <FlatList
-        data={filteredCountries}
+        data={countriesToDisplay}
         renderItem={renderCountryCard}
-        keyExtractor={(item) => item.cca3}
+        keyExtractor={(item, index) => item.cca3 || `country-${index}`}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmptyState}
-        initialNumToRender={15}
+        ListFooterComponent={renderLoadMoreButton}
+        initialNumToRender={INITIAL_LOAD_COUNT}
         maxToRenderPerBatch={10}
         windowSize={10}
         removeClippedSubviews={true}
